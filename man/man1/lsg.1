@@ -1,0 +1,42 @@
+.\" Manpage for lsg
+
+.TH LSG 1 "May 2017" "LSG 2.2" "Development Utility Manuals"
+.SH NAME
+\fBlsg \fR\- Search for file names
+.SH SYNOPSIS
+\fBlsg \fR[\fIOPTIONS\fR]... [\fPPATTERN\fP]
+.SH DESCRIPTION
+\fBlsg\fP is a command-line tool that searches for \fBfiles\fP matching a \fIPATTERN\fP in your current directory
+.SH OPTIONS
+.IP "\fB\-a\fR, \fB\-\-all"
+Search all files, including \fBhidden\fP files, which are ignored by default.
+.IP "\fB\-c\fR, \fB\-\-columnize"
+Print resulting file names in \fBcolumns\fP, similar to \fPls\fP
+.IP "\fB\-d\fR, \fB\-\-directories"
+Search only \fBdirectories\fP.
+.IP "\fB\-f\fR, \fB\-\-files"
+Search only \fBfiles\fP (ignore directories).
+.IP "\fB-m\fR, \fB\-\-match-case"
+Only return \fBcase\-sensitive\fP matches
+.IP "\fB\-o\fR, \fB\-\-hidden"
+Search only \fBhidden\fP files.
+.IP "\fB-v\fR, \fB\-\-verbose"
+Show additional output.
+.IP "\fB-V\fR, \fB\-\-version"
+Print \fBversion\fP information
+.IP "\fB\-x\fR, \fB\-\-executables"
+Search only \fBexecutable\fP files.
+.IP "\fB\-\-"
+Signifies end of options meant for \fBlsc\fP.
+.IP "\fB\-u\fR, \fP\-\-usage"
+display \fBusage\fP
+.IP "\fB\-h\fR, \fP\-\-help"
+display longer \fBhelp\fP
+.SH ENVIRONMENT
+Deployable on any *nix\-based environments with at least ruby version 1.9.2.
+.SH AUTHOR
+Written by Evan Gray.
+.SH REPORTING BUGS
+Report bugs to <\fIevangray3@hotmail.com\fP>
+.SH COPYRIGHT
+Copyright (C) 2017, Evan Gray.  All rights reserved.  There is NO WARRANTY, to the extent permitted by law.
