@@ -1,172 +1,87 @@
 #!/usr/bin/env ruby
-
 require 'optparse'
+require File.join(__dir__, '..', 'lib', 'list_and_grep')
 
-class Array
-  def columnize(spacing = 2)
-    n = self.max_by(&:length).length
-    verbose_save, $VERBOSE = $VERBOSE, nil
-    self.each_slice(`/usr/bin/env tput cols`.to_i / (n + spacing)) do |row|
-      puts row.map { |e| "%-#{n}s" % e }.join(' ' * spacing)
-    end
-    $VERBOSE = verbose_save
-  rescue => e
-    puts "Couldn't columnize list due to #{e}. Printing in one column:"
-    puts self
-  end
+USAGE = "#{File.basename(__FILE__)} [OPTIONS...] [KEYWORD]".freeze
 
-  def reject_by_visibility(type)
-    self.reject do |f|
-      case type
-      when 'all'    then %w(. ..).include?(f)
-      when 'hidden' then !f.start_with?('.') || %w(. ..).include?(f)
-      else  f.start_with?('.')
-      end
-    end
-  end
+def set_options(options)
+  opt_hash = {}
+  types = []
+  modes = []
 
-  def select_by_filetype(mode)
-    self.select do |f|
-      case mode
-      when 'executables'     then File.file?(f) && File.executable?(f)
-      when 'non-executables' then File.file?(f) && !File.executable?(f)
-      when 'files'           then File.file?(f)
-      when 'directories'     then File.directory?(f)
-      else  File.exist?(f)
-      end
+  OptionParser.new do |opts|
+    opts.banner = ::USAGE
+    opts.version = ListAndGrep::VERSION
+    opts.release = ListAndGrep::RELEASE
+
+    opts.on("-a", "--all", "Search all files, including hidden files") do
+      types << 'a'
+      opt_hash[:type] = 'all'
     end
-  end
+    opts.on("-c", "--[no-]columnize", "Print output in columns") do |v|
+      opt_hash[:columnize] = v
+    end
+    opts.on("-d", "--directories", "Search only directories") do
+      modes << 'd'
+      opt_hash[:mode] = "directories"
+    end
+    opts.on("-f", "--files", "Search only files") do
+      modes << 'f'
+      opt_hash[:mode] = "files"
+    end
+    opts.on_tail("-h", "--help", "Prints this help") do
+      puts opts.help
+      exit
+    end
+    opts.on("-m", "--[no-]match-case",
+            "Only return case-sensitive matches") do |v|
+      opt_hash[:match] = v
+    end
+    opts.on("-o", "--hidden", "Search only hidden files") do
+      types << 'o'
+      opt_hash[:type] = 'hidden'
+    end
+    opts.on_tail("-u", "--usage", "Prints usage") do
+      puts ::USAGE
+      exit
+    end
+    opts.on("-v", "--[no-]verbose", "Verbose") do |v|
+      opt_hash[:verbose] = v
+    end
+    opts.on("-V", "--version", "Print version info") do |v|
+      puts opts.ver
+      exit
+    end
+    opts.on('-x', '--executables', "Search only  executable files") do
+      modes << 'x'
+      opt_hash[:mode] = "executables"
+    end
+    opts.on('-X', '--non-executables', "Only choose non-executable files") do
+      modes << 'X'
+      opt_hash[:mode] = 'non-executables'
+    end
+  end.parse!(options)
+
+  opt_hash[:keyword] = options[0]
+
+  abort("Invalid number of args\n#{USAGE}") unless options.size.between?(1, 2)
+
+  [types, modes].each { |arr| abort(conflict_msg(arr)) if arr.size > 1 }
+
+  opt_hash[:type] ||= "non-hidden"
+  opt_hash[:mode] ||= "files and directories"
+
+  opt_hash
+
+rescue OptionParser::InvalidOption, OptionParser::InvalidArgument => e
+  abort("#{e}\n#{USAGE}")
 end
 
-class ListAndGrep
-
-  VERSION = 2.2
-  RELEASE = 'May 2017'
-
-  def initialize(opts)
-    @opts = opts
-  end
-
-  def return_values
-    if files.any?
-      echo "Found when searching #{@opts[:type]} #{@opts[:mode]}:"
-      @opts[:columnize] ? files.columnize(2) : (puts files)
-    else
-      echo "No '#{@opts[:keyword]}' not found!"
-      exit 2
-    end
-  end
-
-  private
-
-  def conflict_msg(flags)
-    "Can't use the following flags together: #{flags.inspect}\n#{::USAGE}"
-  end
-
-  def echo(str)
-    puts str if @opts[:verbose]
-  end
-
-  def files
-    @files ||=
-      if @opts[:match]
-        list.grep(/#{@opts[:keyword]}/)
-      else
-        list.grep(/#{@opts[:keyword]}/i)
-      end
-  end
-
-  def list
-    @list ||=
-      Dir.entries('.').reject_by_visibility(@opts[:type]).
-      select_by_filetype(@opts[:mode])
-  end
-
+def conflict_msg(flags)
+  "Can't use the following flags together: #{flags.inspect}\n#{usage}"
 end
 
-if $PROGRAM_NAME == __FILE__
+finder = ListAndGrep.new(set_options(ARGV))
 
-  def set_options(options)
-    opt_hash = {}
-    types = []
-    modes = []
-
-    OptionParser.new do |opts|
-      opts.banner = ::USAGE
-      opts.version = ListAndGrep::VERSION
-      opts.release = ListAndGrep::RELEASE
-
-      opts.on("-a", "--all", "Search all files, including hidden files") do
-        types << 'a'
-        opt_hash[:type] = 'all'
-      end
-      opts.on("-c", "--[no-]columnize", "Print output in columns") do |v|
-        opt_hash[:columnize] = v
-      end
-      opts.on("-d", "--directories", "Search only directories") do
-        modes << 'd'
-        opt_hash[:mode] = "directories"
-      end
-      opts.on("-f", "--files", "Search only files") do
-        modes << 'f'
-        opt_hash[:mode] = "files"
-      end
-      opts.on_tail("-h", "--help", "Prints this help") do
-        puts opts.help
-        exit
-      end
-      opts.on("-m", "--[no-]match-case",
-              "Only return case-sensitive matches") do |v|
-        opt_hash[:match] = v
-      end
-      opts.on("-o", "--hidden", "Search only hidden files") do
-        types << 'o'
-        opt_hash[:type] = 'hidden'
-      end
-      opts.on_tail("-u", "--usage", "Prints usage") do
-        puts ::USAGE
-        exit
-      end
-      opts.on("-v", "--[no-]verbose", "Verbose") do |v|
-        opt_hash[:verbose] = v
-      end
-      opts.on("-V", "--version", "Print version info") do |v|
-        puts opts.ver
-        exit
-      end
-      opts.on('-x', '--executables', "Search only  executable files") do
-        modes << 'x'
-        opt_hash[:mode] = "executables"
-      end
-      opts.on('-X', '--non-executables', "Only choose non-executable files") do
-        modes << 'X'
-        opt_hash[:mode] = 'non-executables'
-      end
-    end.parse!(options)
-
-    opt_hash[:keyword] = options[0]
-
-    abort("Invalid number of args\n#{USAGE}") unless options.size.between?(1, 2)
-
-    [types, modes].each { |arr| abort(conflict_msg(arr)) if arr.size > 1 }
-
-    opt_hash[:type] ||= "non-hidden"
-    opt_hash[:mode] ||= "files and directories"
-
-    opt_hash
-
-  rescue OptionParser::InvalidOption, OptionParser::InvalidArgument => e
-    abort("#{e}\n#{USAGE}")
-  end
-
-  def conflict_msg(flags)
-    "Can't use the following flags together: #{flags.inspect}\n#{usage}"
-  end
-
-  USAGE = "#{File.basename(__FILE__)} [OPTIONS...] [KEYWORD]".freeze
-
-  finder = ListAndGrep.new(set_options(ARGV))
-
-  finder.return_values
-end
+finder.return_values
 
