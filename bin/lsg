@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'optparse'
-require File.join(__dir__, '..', 'lib', 'list_and_grep')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'list_and_grep')
 
 USAGE = "#{File.basename(__FILE__)} [OPTIONS...] [KEYWORD]".freeze
 
