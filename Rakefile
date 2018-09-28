@@ -1,5 +1,5 @@
 EXECUTABLE = File.join('/', 'usr', 'local', 'bin', 'lsg')
-INSTALL_PATH = File.expand_path(File.join(__dir__), '..')
+INSTALL_PATH = File.expand_path(File.join(File.dirname(__FILE__)), '..')
 
 desc "Install to `/usr/local/bin`"
 task :install do
