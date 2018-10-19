@@ -4,6 +4,9 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'list_and_grep')
 
 USAGE = "#{File.basename(__FILE__)} [OPTIONS...] [KEYWORD]".freeze
 
+MANUAL = File.realpath(
+  File.join(File.dirname(__FILE__), '..', 'man', 'man1', 'lsg.1')).freeze
+
 def set_options(options)
   opt_hash = {}
   types = []
@@ -59,6 +62,9 @@ def set_options(options)
     opts.on('-X', '--non-executables', "Only choose non-executable files") do
       modes << 'X'
       opt_hash[:mode] = 'non-executables'
+    end
+    opts.on('--man', "Open the manual") do
+      exec("man #{MANUAL}")
     end
   end.parse!(options)
 
