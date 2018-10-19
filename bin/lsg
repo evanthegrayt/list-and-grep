@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 require 'optparse'
-require File.join(File.dirname(__FILE__), '..', 'lib', 'list_and_grep')
+require_relative '../lib/list_and_grep'
 
 USAGE = "#{File.basename(__FILE__)} [OPTIONS...] [KEYWORD]".freeze
 
-MANUAL = File.realpath(
-  File.join(File.dirname(__FILE__), '..', 'man', 'man1', 'lsg.1')).freeze
+MANUAL = File.join(
+  File.dirname(File.realpath(__FILE__)), '..', 'man', 'man1', 'lsg.1').freeze
 
 def set_options(options)
   opt_hash = {}
