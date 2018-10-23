@@ -68,8 +68,6 @@ def set_options(options)
     end
   end.parse!(options)
 
-  opt_hash[:keyword] = options[0]
-
   abort("Invalid number of args\n#{USAGE}") unless options.size.between?(1, 2)
 
   [types, modes].each { |arr| abort(conflict_msg(arr)) if arr.size > 1 }
@@ -84,10 +82,13 @@ rescue OptionParser::InvalidOption, OptionParser::InvalidArgument => e
 end
 
 def conflict_msg(flags)
-  "Can't use the following flags together: #{flags.inspect}\n#{usage}"
+  "Can't use the following flags together: #{flags.inspect}\n#{USAGE}"
 end
 
-finder = ListAndGrep.new(set_options(ARGV))
+options = set_options(ARGV)
+keyword = ARGV[0]
+
+finder = ListAndGrep.new(keyword, options)
 
 finder.return_values
 

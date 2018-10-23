@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 
 class Array
   def columnize(spacing = 2)
@@ -38,21 +37,21 @@ end
 
 class ListAndGrep
 
-  VERSION = 2.2
-  RELEASE = 'May 2017'
+  VERSION =  2.3
+  RELEASE = 'October 2018'
 
-  def initialize(opts)
-    @opts = opts
+  def initialize(keyword, opts)
+    @keyword = keyword
+    @opts    = opts
   end
 
   def return_values
-    if files.any?
-      echo "Found when searching #{@opts[:type]} #{@opts[:mode]}:"
-      @opts[:columnize] ? files.columnize(2) : (puts files)
-    else
-      echo "No '#{@opts[:keyword]}' not found!"
-      exit 2
+    unless files.any?
+      echo "No '#{@keyword}' not found!"
+      return
     end
+    echo "Found when searching #{@opts[:type]} #{@opts[:mode]}:"
+    @opts[:columnize] ? files.columnize(2) : (puts files)
   end
 
   private
@@ -68,9 +67,9 @@ class ListAndGrep
   def files
     @files ||=
       if @opts[:match]
-        list.grep(/#{@opts[:keyword]}/)
+        list.grep(/#{@keyword}/)
       else
-        list.grep(/#{@opts[:keyword]}/i)
+        list.grep(/#{@keyword}/i)
       end
   end
 
