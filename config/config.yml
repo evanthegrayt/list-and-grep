@@ -1,0 +1,3 @@
+use_color:    true
+match_color: "\e[1;92m"
+error_color: "\e[1;91m"

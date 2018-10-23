@@ -1,3 +1,4 @@
+require 'yaml'
 
 class Array
   def columnize(spacing = 2)
@@ -43,15 +44,18 @@ class ListAndGrep
   def initialize(keyword, opts)
     @keyword = keyword
     @opts    = opts
+    @config  = YAML.load_file(File.join(__dir__, '../config/config.yml'))
+    @config['match_color'] = "\e[0m" unless @config['use_color']
+    @config['match_color'] = "\e[0m" unless @config['use_color']
   end
 
   def return_values
     unless files.any?
-      echo "No '#{@keyword}' not found!"
+      echo "'#{@config[:error_color]}#{@keyword}\e[0m' not found!"
       return
     end
     echo "Found when searching #{@opts[:type]} #{@opts[:mode]}:"
-    @opts[:columnize] ? files.columnize(2) : (puts files)
+    @opts[:columnize] ? files.columnize(2) : (puts colorize(files))
   end
 
   private
@@ -71,6 +75,10 @@ class ListAndGrep
       else
         list.grep(/#{@keyword}/i)
       end
+  end
+
+  def colorize(array)
+    array.map { |e| e.gsub(@keyword, "#{@config['match_color']}#{@keyword}\e[0m") }
   end
 
   def list
