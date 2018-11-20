@@ -24,6 +24,9 @@ def set_options(options)
     opts.on("-c", "--[no-]columnize", "Print output in columns") do |v|
       opt_hash[:columnize] = v
     end
+    opts.on("-C", "--[no-]color", "Use/disable color. Overrides config.") do |v|
+      opt_hash[:use_color] = v
+    end
     opts.on("-d", "--directories", "Search only directories") do
       modes << 'd'
       opt_hash[:mode] = "directories"

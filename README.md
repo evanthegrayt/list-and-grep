@@ -3,7 +3,7 @@ I often found myself searching for files in my current directory, and while
 `find . -iname "*file*"` is great for recursive searching, and `ls | grep
 [PATTERN]` works, I kept having to chain shell commands together to get the
 exact bahavior I wanted. Rather than creating a bunch of aliases, I decided to
-mae life easier and just create a script that handled the options for me.
+make life easier and just create a script that handled the options for me.
 
 ## Installation
 From your terminal, clone the repository where you want it.

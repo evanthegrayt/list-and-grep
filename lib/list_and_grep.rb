@@ -44,8 +44,9 @@ class ListAndGrep
   def initialize(keyword, opts)
     @keyword = keyword
     @opts    = opts
-    @config  = YAML.load_file(File.join(__dir__, '../config/config.yml'))
-    @config['match_color'] = "\e[0m" unless @config['use_color']
+    @config  = YAML.load_file(
+      File.join(File.dirname(__FILE__), '..', 'config', 'config.yml'))
+    @config['use_color'] = @opts[:use_color] if @opts.key?(:use_color)
     @config['match_color'] = "\e[0m" unless @config['use_color']
   end
 
