@@ -78,7 +78,10 @@ class ListAndGrep
   end
 
   def colorize(array)
-    array.map { |e| e.gsub(@keyword, "#{@config['match_color']}#{@keyword}\e[0m") }
+    array.map do |e|
+      replace = e.match(/#{@keyword}/i).to_s
+      e.gsub(replace, "#{@config['match_color']}#{replace}\e[0m")
+    end
   end
 
   def list
