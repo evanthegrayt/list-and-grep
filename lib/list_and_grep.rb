@@ -44,15 +44,17 @@ class ListAndGrep
   def initialize(keyword, opts)
     @keyword = keyword
     @opts    = opts
-    @config  = YAML.load_file(
-      File.join(File.dirname(__FILE__), '..', 'config', 'config.yml'))
+    @config = File.exist?(config_file) ?  YAML.load_file(config_file) : {}
     @config['use_color'] = @opts[:use_color] if @opts.key?(:use_color)
-    @config['match_color'] = "\e[0m" unless @config['use_color']
+    unless @config['use_color']
+      @config['match_color'] = "\e[0m"
+      @config['error_color'] = "\e[0m"
+    end
   end
 
   def return_values
     unless files.any?
-      echo "'#{@config[:error_color]}#{@keyword}\e[0m' not found!"
+      echo "'#{@config['error_color']}#{@keyword}\e[0m' not found!"
       return
     end
     echo "Found when searching #{@opts[:type]} #{@opts[:mode]}:"
@@ -89,6 +91,10 @@ class ListAndGrep
     @list ||=
       Dir.entries('.').reject_by_visibility(@opts[:type]).
       select_by_filetype(@opts[:mode])
+  end
+
+  def config_file
+    @config_file ||= File.expand_path(File.join('~', '.lsgrc'))
   end
 
 end

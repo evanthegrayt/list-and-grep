@@ -1,0 +1,19 @@
+
+black:  '90'
+red:    '91'
+green:  '92'
+yellow: '93'
+blue:   '94'
+purple: '95'
+cyan:   '96'
+white:  '97'
+
+# Bold (light)
+BBLACK='\e[1;90m'     # Black
+BRED='\e[1;91m'       # Red
+BGREEN='\e[1;92m'     # Green
+BYELLOW='\e[1;93m'    # Yellow
+BBLUE='\e[1;94m'      # Blue
+BPURPLE='\e[1;95m'    # Purple
+BCYAN='\e[1;96m'      # Cyan
+BWHITE='\e[1;97m'     # White

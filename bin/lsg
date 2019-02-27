@@ -8,7 +8,7 @@ MANUAL = File.join(
   File.dirname(File.realpath(__FILE__)), '..', 'man', 'man1', 'lsg.1').freeze
 
 def set_options(options)
-  opt_hash = {}
+  opt_hash = {use_color: true}
   types = []
   modes = []
 
