@@ -89,9 +89,11 @@ def conflict_msg(flags)
 end
 
 options = set_options(ARGV)
-keyword = ARGV[0]
+keywords = ARGV
 
-finder = ListAndGrep.new(keyword, options)
+keywords.each do |keyword|
+  finder = ListAndGrep.new(keyword, options)
 
-finder.return_values
+  finder.return_values
+end
 
