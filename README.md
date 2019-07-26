@@ -34,9 +34,8 @@ options, run `lsg -h`, or for the manual, run `lsg --man`.
 You can create a file called `~/.lsgrc` to configure the way the script behaves.
 Currently, the only configurations are for the output color.
 ```yaml
-use_color:    true       # Use colored output? (default: true)
-match_color: "\e[1;92m"  # The color used when showing matches (default: green)
-error_color: "\e[1;91m"  # The color used when showing errors (default: red)
+use_color: true        # Use colored output? (default: false)
+color:     "\e[1;92m"  # The color used when showing matches (default: green)
 ```
 Note that you are able to enable/disable colored output at runtime with the
 `--[no-]color` option, which will override the boolean in the configuration
