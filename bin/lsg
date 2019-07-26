@@ -5,68 +5,62 @@ require_relative '../lib/list_and_grep'
 USAGE = "#{File.basename(__FILE__)} [OPTIONS...] [KEYWORD]".freeze
 
 MANUAL = File.join(
-  File.dirname(File.realpath(__FILE__)), '..', 'man', 'man1', 'lsg.1').freeze
+  File.dirname(File.realpath(__FILE__)), '..', 'man', 'man1', 'lsg.1'
+).freeze
 
 def set_options(options)
-  opt_hash = {use_color: true}
   types = []
   modes = []
+  opt_hash = {}
 
   OptionParser.new do |opts|
     opts.banner = ::USAGE
     opts.version = ListAndGrep::VERSION
-    opts.release = ListAndGrep::RELEASE
 
-    opts.on("-a", "--all", "Search all files, including hidden files") do
+    opts.on('-a', '--all', 'Search all files, including hidden files') do
       types << 'a'
-      opt_hash[:type] = 'all'
+      opt_hash['type'] = 'all'
     end
-    opts.on("-c", "--[no-]columnize", "Print output in columns") do |v|
-      opt_hash[:columnize] = v
+    opts.on('-c', '--[no-]color', 'Use/disable color. Overrides config.') do |v|
+      opt_hash['use_color'] = v
     end
-    opts.on("-C", "--[no-]color", "Use/disable color. Overrides config.") do |v|
-      opt_hash[:use_color] = v
-    end
-    opts.on("-d", "--directories", "Search only directories") do
+    opts.on('-d', '--directories', 'Search only directories') do
       modes << 'd'
-      opt_hash[:mode] = "directories"
+      opt_hash['mode'] = 'directories'
     end
-    opts.on("-f", "--files", "Search only files") do
+    opts.on('-f', '--files', 'Search only files') do
       modes << 'f'
-      opt_hash[:mode] = "files"
+      opt_hash['mode'] = 'files'
     end
-    opts.on_tail("-h", "--help", "Prints this help") do
+    opts.on_tail('-h', '--help', 'Prints this help') do
       puts opts.help
       exit
     end
-    opts.on("-m", "--[no-]match-case",
-            "Only return case-sensitive matches") do |v|
+    opts.on('-m', '--[no-]match-case',
+            'Only return case-sensitive matches') do |v|
       opt_hash[:match] = v
     end
-    opts.on("-o", "--hidden", "Search only hidden files") do
+    opts.on('-o', '--hidden', 'Search only hidden files') do
       types << 'o'
-      opt_hash[:type] = 'hidden'
+      opt_hash['type'] = 'hidden'
     end
-    opts.on_tail("-u", "--usage", "Prints usage") do
+    opts.on_tail('-u', '--usage', 'Prints usage') do
       puts ::USAGE
       exit
     end
-    opts.on("-v", "--[no-]verbose", "Verbose") do |v|
-      opt_hash[:verbose] = v
-    end
-    opts.on("-V", "--version", "Print version info") do |v|
+    opts.on('-v', '--version', 'Print version info') do |v|
       puts opts.ver
       exit
     end
-    opts.on('-x', '--executables', "Search only  executable files") do
+    opts.on('-x', '--executables', 'Search only  executable files') do
       modes << 'x'
-      opt_hash[:mode] = "executables"
+      opt_hash['mode'] = 'executables'
     end
-    opts.on('-X', '--non-executables', "Only choose non-executable files") do
+    opts.on('-X', '--non-executables', 'Only choose non-executable files') do
       modes << 'X'
-      opt_hash[:mode] = 'non-executables'
+      opt_hash['mode'] = 'non_executables'
     end
-    opts.on('--man', "Open the manual") do
+    opts.on('--man', 'Open the manual') do
       exec("man #{MANUAL}")
     end
   end.parse!(options)
@@ -75,25 +69,24 @@ def set_options(options)
 
   [types, modes].each { |arr| abort(conflict_msg(arr)) if arr.size > 1 }
 
-  opt_hash[:type] ||= "non-hidden"
-  opt_hash[:mode] ||= "files and directories"
+  opt_hash['type'] ||= 'non-hidden'
+  opt_hash['mode'] ||= 'files-and-directories'
 
   opt_hash
-
 rescue OptionParser::InvalidOption, OptionParser::InvalidArgument => e
   abort("#{e}\n#{USAGE}")
 end
 
 def conflict_msg(flags)
-  "Can't use the following flags together: #{flags.inspect}\n#{USAGE}"
+  "The following flags conflict: #{flags.map { |e| "-#{e}" }}\n#{USAGE}"
 end
 
 options = set_options(ARGV)
 keywords = ARGV
 
 keywords.each do |keyword|
-  finder = ListAndGrep.new(keyword, options)
+  finder = ListAndGrep::KeywordFinder.new(keyword, options)
 
-  finder.return_values
+  puts finder.matches unless finder.matches.nil?
 end
 
