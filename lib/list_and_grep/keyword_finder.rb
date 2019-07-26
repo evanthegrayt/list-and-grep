@@ -22,7 +22,7 @@ class KeywordFinder
 
   def matched_files
     @matched_files ||= files_by_type.select do |e|
-      match? ? e.downcase.include?(keyword.downcase) : e.include?(keyword)
+      match? ? e.include?(keyword) : e.downcase.include?(keyword.downcase)
     end
   end
 
