@@ -18,7 +18,7 @@ class Array
       when 'non_executables' then File.file?(f) && !File.executable?(f)
       when 'files'           then File.file?(f)
       when 'directories'     then File.directory?(f)
-      else  File.exist?(f)
+      else true
       end
     end
   end

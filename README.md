@@ -32,7 +32,9 @@ options, run `lsg -h`, or for the manual, run `lsg --man`.
 
 ## Configuration
 You can create a file called `~/.lsgrc` to configure the way the script behaves.
-Currently, the only configurations are for the output color.
+Currently, the only configurations are for the output color. Just be forewarned,
+enabling color could considerably increase run-time when the directory contains
+a very large amount of entries.
 ```yaml
 use_color: true        # Use colored output? (default: false)
 color:     "\e[1;92m"  # The color used when showing matches (default: green)
