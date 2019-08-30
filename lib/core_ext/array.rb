@@ -23,8 +23,7 @@ class Array
     end
   end
 
-  def colorize(keyword, color)
-    color ||= "\e[0;92m"
+  def colorize(keyword, color = "\e[0;92m")
     map do |e|
       replace = e.match(/#{keyword}/i).to_s
       e.gsub(replace, "#{color}#{replace}\e[0m")
