@@ -41,3 +41,8 @@ Note that you are able to enable/disable colored output at runtime with the
 `--[no-]color` option, which will override the boolean in the configuration
 file.
 
+## Self-Promotion
+I do these projects for fun, and I enjoy knowing that they're helpful to people.
+Consider starring [the
+repository](https://github.com/evanthegrayt/list-and-grep) if you like it! If
+you love it, follow me [on github](https://github.com/evanthegrayt)!
