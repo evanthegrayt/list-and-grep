@@ -18,13 +18,12 @@ class Array
       when 'non_executables' then File.file?(f) && !File.executable?(f)
       when 'files'           then File.file?(f)
       when 'directories'     then File.directory?(f)
-      else  File.exist?(f)
+      else true
       end
     end
   end
 
-  def colorize(keyword, color)
-    color ||= "\e[0;92m"
+  def colorize(keyword, color = "\e[0;92m")
     map do |e|
       replace = e.match(/#{keyword}/i).to_s
       e.gsub(replace, "#{color}#{replace}\e[0m")
